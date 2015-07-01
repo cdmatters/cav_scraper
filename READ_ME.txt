@@ -1,5 +1,5 @@
-This is the READ_ME to be read before running CavScraper for the
-first time.
+This README is for people who are completely new to programming and haven’t installed pip. Its a bit clearer than the README.md file, with instructions on how to get started and run the file.
+
 
 WHAT:
 This program is designed to help you pull all the files you want 
