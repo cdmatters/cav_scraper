@@ -1,0 +1,12 @@
+#files to ignore
+keys.py
+
+
+#useless extensions
+.pyc
+.db
+.DS_Store
+
+#folders to ignore
+resources/
+venv/
