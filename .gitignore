@@ -3,9 +3,9 @@ keys.py
 
 
 #useless extensions
-.pyc
-.db
-.DS_Store
+*.pyc
+*.db
+*.DS_Store
 
 #folders to ignore
 resources/
