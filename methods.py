@@ -4,6 +4,7 @@ import requests
 import sqlite3
 import os
 import time
+import re
 
 
 ##############   BROWSE METHODS   ##################
@@ -108,25 +109,35 @@ def download_resources(urlpackage, session, url, query):
                 url_tuple = (query['doc'], query['sort'],p[1],p[3],p[4])
             elif query['sort'] == 'Year':
                 url_tuple = (query['doc'], query['sort'],p[3],p[1],p[4])
-            filename = 'resources/%s/requests_by_%s/%s/%s/%s'%url_tuple+'/%s.pdf'%(p[0].replace('/','-')) 
+            filename = 'resources/%s/requests_by_%s/%s/%s/%s'%url_tuple+'/%s'%(p[0].replace('/','-')) 
             
             if not os.path.exists('resources/%s/requests_by_%s/%s/%s/%s' % url_tuple):
                 os.makedirs('resources/%s/requests_by_%s/%s/%s/%s' % url_tuple)                    
             
-            if p[7] == 0 or not os.path.exists(filename):                                
+            if p[7] == 0:  # or not os.path.exists(filename):                                
 
                 download = session.get(url+p[6])
+                header_content = download.headers['content-disposition']
+                extension = re.findall("\.[0-9a-z]*$", header_content)
+                
+                if len(extension)==0:
+                    extension = ''
+                else:
+                    extension = extension[0]
+                
+                
 
                 try:
-                    with open(filename,  'w+' ) as savefile:
+                    with open(filename+extension,  'w+' ) as savefile:
                         savefile.write(download.content)
                     with sqlite3.connect('cavendish.db') as connection:
                         cur = connection.cursor()
                         cur.execute('UPDATE %s SET Downloaded = 1 WHERE Link = %s'%(query['doc'],"'"+p[6]+"'"))
+                        connection.commit()
                         print '\r',i,' : ',p[0]              
                 except Exception,e:
                     err_count.append([p[0],str(e)])
-                    print '[ERR]: ',i,' : ',p[0]
+                    print '[ERR]: ',i,' : ',p[0], '\n', e
 
             elif p[7] == 1 :
                 print '[FOUND]:',i,' :',p[0]
